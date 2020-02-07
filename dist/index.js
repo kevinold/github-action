@@ -5882,7 +5882,7 @@ const installMaybe = () => {
     return Promise.resolve()
   }
 
-  return Promise.all([run()]).then(
+  return Promise.all([run]).then(
     ([npmCacheHit, cypressCacheHit]) => {
       core.debug(`npm cache hit ${npmCacheHit}`)
       core.debug(`cypress cache hit ${cypressCacheHit}`)
