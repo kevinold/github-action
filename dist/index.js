@@ -2388,15 +2388,15 @@ const ping = (url, timeout) => {
         core.debug(
           `${now - start}ms ${error.method} ${error.host} ${
             error.code
-          }`,
+          }`
         )
         if (now - start > timeout) {
           console.error('%s timed out', url)
           return 0
         }
         return 1000
-      },
-    },
+      }
+    }
   })
 }
 
@@ -2413,16 +2413,16 @@ const workingDirectory =
  * use the install directory as current working directory
  */
 const cypressCommandOptions = {
-  cwd: workingDirectory,
+  cwd: workingDirectory
 }
 
 const yarnFilename = path.join(
   workingDirectory,
-  'yarn.lock',
+  'yarn.lock'
 )
 const packageLockFilename = path.join(
   workingDirectory,
-  'package-lock.json',
+  'package-lock.json'
 )
 
 const useYarn = () => fs.existsSync(yarnFilename)
@@ -2465,16 +2465,16 @@ const getNpmCache = () => {
 const CYPRESS_CACHE_FOLDER = path.join(
   homeDirectory,
   '.cache',
-  'Cypress',
+  'Cypress'
 )
 core.debug(
-  `using custom Cypress cache folder "${CYPRESS_CACHE_FOLDER}"`,
+  `using custom Cypress cache folder "${CYPRESS_CACHE_FOLDER}"`
 )
 
 const getCypressBinaryCache = () => {
   const o = {
     inputPath: CYPRESS_CACHE_FOLDER,
-    restoreKeys: `cypress-${platformAndArch}-`,
+    restoreKeys: `cypress-${platformAndArch}-`
   }
   o.primaryKey = o.restoreKeys + lockHash()
   return o
@@ -2496,7 +2496,7 @@ const saveCachedNpm = () => {
   const NPM_CACHE = getNpmCache()
   return saveCache(
     NPM_CACHE.primaryKey,
-    NPM_CACHE.inputPath,
+    NPM_CACHE.inputPath
   )
 }
 
@@ -2515,7 +2515,7 @@ const saveCachedCypressBinary = () => {
   const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return saveCache(
     CYPRESS_BINARY_CACHE.inputPath,
-    CYPRESS_BINARY_CACHE.primaryKey,
+    CYPRESS_BINARY_CACHE.primaryKey
   )
 }
 
@@ -2524,7 +2524,7 @@ const install = () => {
   core.exportVariable('CI', '1')
   core.exportVariable(
     'CYPRESS_CACHE_FOLDER',
-    CYPRESS_CACHE_FOLDER,
+    CYPRESS_CACHE_FOLDER
   )
   const customCacheKey = core.getInput('cache-key')
 
@@ -2541,14 +2541,14 @@ const install = () => {
       return exec.exec(
         quote(yarnPath),
         ['--frozen-lockfile'],
-        cypressCommandOptions,
+        cypressCommandOptions
       )
     })
   } else {
     core.debug('installing NPM dependencies')
     core.exportVariable(
       'npm_config_cache',
-      NPM_CACHE_FOLDER,
+      NPM_CACHE_FOLDER
     )
 
     return io.which('npm', true).then(npmPath => {
@@ -2556,7 +2556,7 @@ const install = () => {
       return exec.exec(
         quote(npmPath),
         ['ci'],
-        cypressCommandOptions,
+        cypressCommandOptions
       )
     })
   }
@@ -2566,13 +2566,13 @@ const verifyCypressBinary = () => {
   core.debug('Verifying Cypress')
   core.exportVariable(
     'CYPRESS_CACHE_FOLDER',
-    CYPRESS_CACHE_FOLDER,
+    CYPRESS_CACHE_FOLDER
   )
   return io.which('npx', true).then(npxPath => {
     return exec.exec(
       quote(npxPath),
       ['cypress', 'verify'],
-      cypressCommandOptions,
+      cypressCommandOptions
     )
   })
 }
@@ -2625,11 +2625,11 @@ const startServerMaybe = () => {
 
   console.log(
     'starting server with command "%s"',
-    startCommand,
+    startCommand
   )
   console.log(
     'current working directory "%s"',
-    process.cwd(),
+    process.cwd()
   )
 
   const args = cliParser.parse(startCommand)
@@ -2642,8 +2642,8 @@ const startServerMaybe = () => {
     const toolArguments = args.slice(1)
     core.debug(
       `running ${quote(toolPath)} ${toolArguments.join(
-        ' ',
-      )}`,
+        ' '
+      )}`
     )
     core.debug('without waiting for the promise to resolve')
 
@@ -2664,7 +2664,7 @@ const waitOnMaybe = () => {
   console.log(
     'waiting on "%s" with timeout of %s seconds',
     waitOn,
-    waitOnTimeout,
+    waitOnTimeout
   )
 
   const waitTimeoutMs = parseFloat(waitOnTimeout) * 1000
@@ -2678,7 +2678,7 @@ const runTests = () => {
   const runTests = getInputBool('runTests', true)
   if (!runTests) {
     console.log(
-      'Skipping running tests: runTests parameter is false',
+      'Skipping running tests: runTests parameter is false'
     )
     return
   }
@@ -2697,7 +2697,7 @@ const runTests = () => {
   return io.which('npx', true).then(npxPath => {
     core.exportVariable(
       'CYPRESS_CACHE_FOLDER',
-      CYPRESS_CACHE_FOLDER,
+      CYPRESS_CACHE_FOLDER
     )
 
     let cmd = []
@@ -2707,9 +2707,7 @@ const runTests = () => {
       const parts = commandPrefix.split(' ')
       cmd = cmd.concat(parts)
       core.debug(
-        `with concatenated command prefix: ${cmd.join(
-          ' ',
-        )}`,
+        `with concatenated command prefix: ${cmd.join(' ')}`
       )
     }
     // push each CLI argument separately
@@ -2780,18 +2778,18 @@ const runTests = () => {
 
     console.log(
       'Cypress test command: npx %s',
-      cmd.join(' '),
+      cmd.join(' ')
     )
 
     core.exportVariable('TERM', 'xterm')
     // since we have quoted arguments ourselves, do not double quote them
     const opts = {
       ...cypressCommandOptions,
-      windowsVerbatimArguments: false,
+      windowsVerbatimArguments: false
     }
 
     core.debug(
-      `in working directory "${cypressCommandOptions.workingDirectory}"`,
+      `in working directory "${cypressCommandOptions.workingDirectory}"`
     )
     return exec.exec(quote(npxPath), cmd, opts)
   })
