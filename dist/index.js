@@ -5445,7 +5445,7 @@ const io = __webpack_require__(1)
 const hasha = __webpack_require__(309)
 const got = __webpack_require__(798)
 //const { restoreCache, saveCache } = require('cache/lib/index')
-const restoreRun = __webpack_require__(170).run
+const run = __webpack_require__(170)
 const { saveCache } = __webpack_require__(35)
 const fs = __webpack_require__(747)
 const os = __webpack_require__(87)
@@ -5561,7 +5561,7 @@ const getCypressBinaryCache = () => {
 const restoreCachedNpm = () => {
   core.debug('trying to restore cached NPM modules')
   const NPM_CACHE = getNpmCache()
-  return restoreRun()
+  return run
   /*return restoreCache(
     NPM_CACHE.inputPath,
     NPM_CACHE.primaryKey,
@@ -5578,15 +5578,15 @@ const saveCachedNpm = () => {
   )
 }
 
-const restoreCachedCypressBinary = () => {
+/*const restoreCachedCypressBinary = () => {
   core.debug('trying to restore cached Cypress binary')
   const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return restoreCache(
     CYPRESS_BINARY_CACHE.inputPath,
     CYPRESS_BINARY_CACHE.primaryKey,
-    CYPRESS_BINARY_CACHE.restoreKeys
+    CYPRESS_BINARY_CACHE.restoreKeys,
   )
-}
+}*/
 
 const saveCachedCypressBinary = () => {
   core.debug('saving Cypress binary')
@@ -5882,26 +5882,25 @@ const installMaybe = () => {
     return Promise.resolve()
   }
 
-  return Promise.all([
-    restoreCachedNpm(),
-    restoreCachedCypressBinary()
-  ]).then(([npmCacheHit, cypressCacheHit]) => {
-    core.debug(`npm cache hit ${npmCacheHit}`)
-    core.debug(`cypress cache hit ${cypressCacheHit}`)
+  return Promise.all([run()]).then(
+    ([npmCacheHit, cypressCacheHit]) => {
+      core.debug(`npm cache hit ${npmCacheHit}`)
+      core.debug(`cypress cache hit ${cypressCacheHit}`)
 
-    return install().then(() => {
-      if (npmCacheHit && cypressCacheHit) {
-        core.debug(
-          'no need to verify Cypress binary or save caches'
-        )
-        return
-      }
+      return install().then(() => {
+        if (npmCacheHit && cypressCacheHit) {
+          core.debug(
+            'no need to verify Cypress binary or save caches'
+          )
+          return
+        }
 
-      return verifyCypressBinary()
-        .then(saveCachedNpm)
-        .then(saveCachedCypressBinary)
-    })
-  })
+        return verifyCypressBinary()
+          .then(saveCachedNpm)
+          .then(saveCachedCypressBinary)
+      })
+    }
+  )
 }
 
 installMaybe()
