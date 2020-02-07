@@ -4,10 +4,9 @@ const exec = require('@actions/exec')
 const io = require('@actions/io')
 const hasha = require('hasha')
 const got = require('got')
-const {
-  restoreCache,
-  saveCache,
-} = require('cache/lib/index')
+//const { restoreCache, saveCache } = require('cache/lib/index')
+const restoreCache = require('cache/dist/restore')
+const saveCache = require('cache/dist/save')
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
