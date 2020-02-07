@@ -5445,8 +5445,8 @@ const io = __webpack_require__(1)
 const hasha = __webpack_require__(309)
 const got = __webpack_require__(798)
 //const { restoreCache, saveCache } = require('cache/lib/index')
-const restoreCache = __webpack_require__(170)
-const saveCache = __webpack_require__(35)
+const { getCacheEntry } = __webpack_require__(170)
+const { saveCache } = __webpack_require__(35)
 const fs = __webpack_require__(747)
 const os = __webpack_require__(87)
 const path = __webpack_require__(622)
@@ -5561,11 +5561,12 @@ const getCypressBinaryCache = () => {
 const restoreCachedNpm = () => {
   core.debug('trying to restore cached NPM modules')
   const NPM_CACHE = getNpmCache()
-  return restoreCache(
+  return getCacheEntry(NPM_CACHE)
+  /*return restoreCache(
     NPM_CACHE.inputPath,
     NPM_CACHE.primaryKey,
     NPM_CACHE.restoreKeys
-  )
+  )*/
 }
 
 const saveCachedNpm = () => {
